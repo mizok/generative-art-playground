@@ -20,7 +20,10 @@
   },
   "homepage": "https://github.com/mizok/webpack_playground#readme",
   "devDependencies": {
+<<<<<<< HEAD
     "@types/p5": "^1.4.2",
+=======
+>>>>>>> de80ac2cfa818f79e586ac31c031df4537da01a8
     "@types/webpack-dev-server": "^4.7.2",
     "copy-webpack-plugin": "^9.0.1",
     "cross-env": "^7.0.3",
@@ -47,8 +50,12 @@
   },
   "dependencies": {
     "es6-promise": "^4.2.8",
+<<<<<<< HEAD
     "hamburgers": "^1.2.1",
     "p5": "^1.4.1"
+=======
+    "hamburgers": "^1.2.1"
+>>>>>>> de80ac2cfa818f79e586ac31c031df4537da01a8
   },
   "browserslist": [
     "last 2 version",
