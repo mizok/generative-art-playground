@@ -1,4 +1,5 @@
-@mixin reset() {
+@import './main';
+
   * {
     padding: 0;
     margin: 0;
@@ -296,6 +297,6 @@
     overflow-x: visible;
     overflow-y: scroll;
   }
-}
+
 
 /********************* global reset Start*********************/
