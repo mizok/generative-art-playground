@@ -2,11 +2,7 @@
 title: webpack-playground-template
 date: 
 author: Mizok
-<<<<<<< HEAD
-version: 0.1.0
-=======
-version: 0.1.1
->>>>>>> de80ac2cfa818f79e586ac31c031df4537da01a8
+version: 0.2.3
 tags: 
 ---
 
