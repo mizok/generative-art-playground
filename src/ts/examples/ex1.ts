@@ -27,8 +27,8 @@ function wavePattern(p: p5) {
   p.blendMode('screen')
   p.clear(0, 0, 0, 0);
   p.background(0);
-  const gap = 50;
   p.noStroke();
+  const gap = 50;
   const clr1 = p.color('#8f2d56');
   const clr2 = p.color('#218380');
   const iterate = p.int(p.width / gap); p.print(iterate);
