@@ -7,7 +7,6 @@ function setRadialGradient(sX: number, sY: number, sR: number, eX: number, eY: n
   );
   gradient.addColorStop(0, colorS);
   gradient.addColorStop(1, colorE);
-
   p.drawingContext.fillStyle = gradient;
 }
 class Slime {
@@ -75,19 +74,16 @@ function drawShade(p: p5.Graphics, rate: number) {
 function main() {
   const sketch = (p: p5) => {
 
-    //create Array of slimes
-
-
     p.setup = () => {
       // create canvas and do init background
       p.rectMode(p.CENTER);
       p.createCanvas(p.windowWidth, p.windowHeight);
-      p.background(0);
       p.blendMode('screen');
 
       const ctx: CanvasRenderingContext2D = p.drawingContext;
       const shadeGraphic = p.createGraphics(p.width, p.height);
       const gradientGraphic = p.createGraphics(p.width, p.height);
+      const maskGraphic = p.createGraphics(p.width, p.height);
       setRadialGradient(
         p.width / 2, p.height / 2, 0,//Start pX, pY, start circle radius
         p.width / 2, p.height / 2, p.height,//End pX, pY, End circle radius
@@ -95,10 +91,19 @@ function main() {
         '#111111', //end color
         gradientGraphic
       )
+      setRadialGradient(
+        p.width / 2, p.height / 2, 0,//Start pX, pY, start circle radius
+        p.width / 2, p.height / 2, p.height,//End pX, pY, End circle radius
+        'transparent', //start color
+        '#000000', //end color
+        maskGraphic
+      )
       gradientGraphic.noStroke();
       gradientGraphic.rectMode(gradientGraphic.CENTER);
       gradientGraphic.rect(p.width / 2, p.height / 2, p.width, p.height);
-
+      maskGraphic.noStroke();
+      maskGraphic.rectMode(maskGraphic.CENTER);
+      maskGraphic.rect(p.width / 2, p.height / 2, p.width, p.height);
 
       drawShade(shadeGraphic, 5)
 
@@ -110,15 +115,16 @@ function main() {
 
         p.translate(-p.width * (rate - 1) / 2, -p.height * (rate - 1) / 2);
         p.scale(rate);
-        // p.translate(p.width * (rate - 1) / 2, p.height * (rate - 1) / 2);
       }
       p.blendMode('difference');
+      p.image(gradientGraphic, -p.width / 2, 0, 2 * p.width, p.height)
+      // p.blendMode(p.HARD_LIGHT);
+      // p.image(gradientGraphic, 0, 0, p.width, p.height)
+      p.blendMode(p.DODGE);
       p.image(gradientGraphic, 0, 0, p.width, p.height)
-      p.blendMode('multiply');
       p.image(gradientGraphic, 0, 0, p.width, p.height)
-      p.blendMode('screen');
-      // ctx.globalAlpha = 1;
-      p.image(shadeGraphic, 0, 0, p.width, p.height);
+      p.image(gradientGraphic, 0, 0, p.width, p.height)
+      p.image(maskGraphic, 0, 0, p.width, p.height)
     }
 
   };
