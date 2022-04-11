@@ -35,7 +35,7 @@ for more detail, please check links below:
 - https://github.com/dc7290/template-ejs-loader  
 - https://ejs.bootcss.com/  
 
-### How to connect exmaple `ejs` file with exmaple entry `ts` file/ example entry `scss` file?
+### How to connect example `ejs` file with example entry `ts` file/ example entry `scss` file?
 
 Here we are actually talking about `webpack` entry chunks.
 
