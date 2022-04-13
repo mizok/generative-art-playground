@@ -9,7 +9,7 @@ import 'webpack-dev-server'; // dont remove this import, it's for webpack-dev-se
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 const NO_COMPRESS = false;
 
-const getEntriesByParsingTemplateNames = (templatesFolderName,atRoot = true)=>{
+const getEntriesByParsingTemplateNames = (templatesFolderName, atRoot = true) => {
   const folderPath = resolve(__dirname, `./src/${templatesFolderName}`);
   const entryObj: webpack.EntryObject = {};
   const templateRegx = /(.*)(\.)(ejs|html)/g;
@@ -21,25 +21,26 @@ const getEntriesByParsingTemplateNames = (templatesFolderName,atRoot = true)=>{
       entryName = entryName.replace(entryRegex, `$3`);
     }
 
-    const entryDependency= atRoot?entryName:`${templatesFolderName}/${entryName}`
+    const entryDependency = atRoot ? entryName : `${templatesFolderName}/${entryName}`
 
     let entryPath = resolve(__dirname, `src/ts/${entryDependency}.ts`);
     // entry stylesheet
     let entryStyleSheetPath = resolve(__dirname, `./src/scss/${entryDependency}.scss`);
-
-    entryPath = fs.existsSync(entryPath)?entryPath:undefined;
-    entryStyleSheetPath = fs.existsSync(entryStyleSheetPath)?entryStyleSheetPath:undefined;
+    console.log(entryPath, entryStyleSheetPath)
+    entryPath = fs.existsSync(entryPath) ? entryPath : undefined;
+    entryStyleSheetPath = fs.existsSync(entryStyleSheetPath) ? entryStyleSheetPath : undefined;
 
     // import es6-promise and scss util automatically
-    entryObj[entryName] = ['es6-promise/auto',entryPath,'./src/scss/reset.scss',entryStyleSheetPath].filter(function (x: string | undefined) {
+    entryObj[entryName] = ['es6-promise/auto', entryPath, './src/scss/reset.scss', entryStyleSheetPath].filter(function (x: string | undefined) {
       return x !== undefined;
     });
 
   })
+  console.log(entryObj);
   return entryObj;
 }
 
-const getTemaplteInstancesByParsingTemplateNames = (templatesFolderName,atRoot=true)=>{
+const getTemaplteInstancesByParsingTemplateNames = (templatesFolderName, atRoot = true) => {
   const forderPath = resolve(__dirname, `./src/${templatesFolderName}`);
   return fs.readdirSync(forderPath).map((fullFileName: string) => {
     const templateRegx = /(.*)(\.)(ejs|html)/g;
@@ -59,11 +60,11 @@ const getTemaplteInstancesByParsingTemplateNames = (templatesFolderName,atRoot=t
       fs.writeFile(ejsFilePath, ' ', () => { });
       console.warn(`WARNING : ${fullFileName} is an empty file`);
     }
-  
+
     return new HtmlWebpackPlugin({
       cache: false,
       chunks: [entryName],
-      filename: `${atRoot?'':templatesFolderName+'/'}${outputFileName}.html`,
+      filename: `${atRoot ? '' : templatesFolderName + '/'}${outputFileName}.html`,
       template: isEjs ? ejsFilePath : ejsFilePath.replace(ejsRegex, `$1.html`),
       favicon: 'src/assets/images/logo.svg',
       minify: NO_COMPRESS ? false : {
@@ -85,15 +86,15 @@ const getTemaplteInstancesByParsingTemplateNames = (templatesFolderName,atRoot=t
 //generate pageEntry object
 const pageEntries: webpack.EntryObject = getEntriesByParsingTemplateNames('pages');
 //generate exampleEntry object
-const exampleEntries: webpack.EntryObject = getEntriesByParsingTemplateNames('examples',false);
+const exampleEntries: webpack.EntryObject = getEntriesByParsingTemplateNames('examples', false);
 //generate htmlWebpackPlugin instances
 const pageEntryTemplates: HtmlWebpackPlugin[] = getTemaplteInstancesByParsingTemplateNames('pages');
-const exampleEntryTemplates: HtmlWebpackPlugin[] = getTemaplteInstancesByParsingTemplateNames('examples',false);
+const exampleEntryTemplates: HtmlWebpackPlugin[] = getTemaplteInstancesByParsingTemplateNames('examples', false);
 
 
-const config = (env:any,argv:any):webpack.Configuration=>{
-  const configObj:webpack.Configuration = {
-    entry: {...pageEntries,...exampleEntries},
+const config = (env: any, argv: any): webpack.Configuration => {
+  const configObj: webpack.Configuration = {
+    entry: { ...pageEntries, ...exampleEntries },
     output: {
       filename: 'js/[name].[chunkhash].js',
       chunkFilename: '[id].[chunkhash].js',
@@ -146,8 +147,8 @@ const config = (env:any,argv:any):webpack.Configuration=>{
             {
               loader: 'template-ejs-loader',
               options: {
-                data:{
-                  mode:argv.mode
+                data: {
+                  mode: argv.mode
                 }
               }
             }
@@ -187,14 +188,14 @@ const config = (env:any,argv:any):webpack.Configuration=>{
                 options: { sourceMap: true, sassOptions: { minimize: false, outputStyle: 'expanded' } }
               } : 'sass-loader'
             })()
-  
+
           ]
         },
         {
           test: /\.(woff(2)?|eot|ttf|otf|svg)$/,
           type: 'asset/inline',
         }
-  
+
       ]
     },
     resolve: {
@@ -245,7 +246,7 @@ const config = (env:any,argv:any):webpack.Configuration=>{
       ),
       ...pageEntryTemplates,
       ...exampleEntryTemplates
-  
+
     ].filter(function (x) {
       return x !== undefined;
     })

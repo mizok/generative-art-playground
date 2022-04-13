@@ -1,80 +1,81 @@
-$hamburger-padding-x           : 10px ;
-$hamburger-padding-y           : 10px ;
-$hamburger-layer-width         : 20px ;
-$hamburger-layer-height        : 4px ;
-$hamburger-layer-spacing       : 4px ;
-$hamburger-layer-color         : gray ;
-$hamburger-layer-border-radius : 4px ;
-$hamburger-hover-opacity       : 0.7 ;
-$hamburger-active-layer-color  : gray ;
+$hamburger-padding-x : 10px;
+$hamburger-padding-y : 10px;
+$hamburger-layer-width : 20px;
+$hamburger-layer-height : 4px;
+$hamburger-layer-spacing : 4px;
+$hamburger-layer-color : gray;
+$hamburger-layer-border-radius : 4px;
+$hamburger-hover-opacity : 0.7;
+$hamburger-active-layer-color : gray;
 
 @import '~hamburgers/_sass/hamburgers/hamburgers.scss';
 @import 'util/main';
 
 
-.playground{
+.playground {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  $sidebarWidth:300px;
-  
-  &__inner{
+  $sidebarWidth: 300px;
+
+  &__inner {
     display: inline-flex;
     height: 100%;
     width: calc(100% + #{$sidebarWidth});
     transform:translateX(-#{$sidebarWidth});
-    transition:transform 500ms;
+    transition: transform 500ms;
   }
 
-  &--active &__inner{
-    transform:translateX(0);
+  &--active &__inner {
+    transform: translateX(0);
   }
 
-  &--active &__body::after{
+  &--active &__body::after {
     opacity: 1;
   }
 
 
-  &__title{
-    font-family: 'Noto Sans TC';
+  &__title {
     font-weight: 300;
     font-size: 30px;
-    padding: 30px ;
+    padding: 30px;
     margin: 0;
   }
 
-  &__sidebar{
+  &__sidebar {
     width: $sidebarWidth;
     height: 100%;
-    flex:none;
-    box-shadow: -13px 4px 42px -15px rgba(59,59,59,0.8) inset;
+    flex: none;
+    box-shadow: -13px 4px 42px -15px rgba(59, 59, 59, 0.8) inset;
     background-color: #eee;
     display: flex;
     flex-direction: column;
-    >*{
-      flex:1;
+
+    >* {
+      flex: 1;
     }
   }
 
-  &__sidebar > &__title{
-    flex:none;
+  &__sidebar>&__title {
+    flex: none;
   }
 
-  &__body{
+  &__body {
     width: calc(100% - #{$sidebarWidth});
-    flex:none;
+    flex: none;
     height: 100%;
     position: relative;
     z-index: 1;
-    &:after{
+
+    &:after {
       content: '';
       display: block;
       width: 100%;
       height: 100%;
       position: absolute;
-      background-color: rgba(0,0,0,0.8);
+      background-color: rgba(0, 0, 0, 0.8);
       opacity: 0;
-      transition:opacity 500ms;
+      transition: opacity 500ms;
       z-index: 2;
       top: 0;
       left: 0;
@@ -82,23 +83,39 @@ $hamburger-active-layer-color  : gray ;
     }
   }
 
-  &__body &__toggler{
+  &__body &__loading {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    top: 50%;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    z-index: 1;
+    animation: fadeIn 1s infinite alternate;
+  }
+
+  &__body &__toggler {
     position: absolute;
     left: 0;
     top: 0;
     z-index: 3;
   }
 
-  &__content{
+  &__content {
     width: 100%;
     height: 100%;
+    position: relative;
+    z-index: 2;
   }
 }
-.menu{
+
+.menu {
   width: 100%;
   overflow: hidden;
   position: relative;
-  @mixin shade{
+
+  @mixin shade {
     content: '';
     display: block;
     height: 10px;
@@ -106,59 +123,65 @@ $hamburger-active-layer-color  : gray ;
     position: absolute;
     pointer-events: none;
     opacity: 0;
-    transition:opacity 500ms;
+    transition: opacity 500ms;
     z-index: 3;
   }
-  &:before{
+
+  &:before {
     top: 0;
     @include shade;
-    filter:blur(3px);
-    background-image: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(100,100,100, 0.3) 100%);
+    filter: blur(3px);
+    background-image: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(100, 100, 100, 0.3) 100%);
   }
-  &:after{
+
+  &:after {
     bottom: 0;
     @include shade;
     height: 50%;
-    background-image: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(100,100,100,0.5) 100%);;
+    background-image: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(100, 100, 100, 0.5) 100%);
+    ;
   }
 
-  &--top-shaded::before{
+  &--top-shaded::before {
     opacity: 1;
   }
-  &--bot-shaded::after{
+
+  &--bot-shaded::after {
     opacity: 1;
   }
- 
-  &__inner{
+
+  &__inner {
     height: 100%;
     overflow: auto;
   }
-  &__list{
+
+  &__list {
     width: 100%;
   }
 
-  &__item{
+  &__item {
     width: 100%
   }
 
 
-  &__link{
+  &__link {
     font-size: 16px;
-    font-family: 'Noto Sans TC';
     padding: 20px 30px;
     background-color: transparent;
-    transition:color 500ms,background-color 500ms;
+    transition: color 500ms, background-color 500ms;
     width: 100%;
     display: block;
-    color:gray;
+    color: gray;
     text-decoration: none;
-    &:hover,&:active{
-      color:white;
+
+    &:hover,
+    &:active {
+      color: white;
       text-decoration: none;
     }
 
-    &:hover{
-      background-color: rgba(175, 175, 175,0.5);
+    &:hover {
+      background-color: rgba(175, 175, 175, 0.5);
     }
   }
 }
