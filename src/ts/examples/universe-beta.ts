@@ -160,7 +160,7 @@ function main() {
       // 創造星空圖樣
       const starLightGraphic = createStarLightTexture(p, 600);
       // 創造漸層圖樣
-      const gradientGraphic = createGradientTexture(p, { name: '#b0efff', val: 0 }, { name: '#78cce2', val: 0.12 }, { name: '#002439', val: 1 });
+      const gradientGraphic = createGradientTexture(p, { name: '#b0efff', val: 0 }, { name: '#f7a354', val: 0.12 }, { name: '#002439', val: 1 });
       const maskGraphic = createGradientTexture(p, { name: 'transparent', val: 0 }, { name: '#000000', val: 1 });
       return {
         shadeGraphic, starLightGraphic, gradientGraphic, maskGraphic
@@ -189,7 +189,7 @@ function main() {
       p.blendMode(p.DIFFERENCE);
       const scaleHRate1 = 1.65;
       const scaleHRate2 = 1.3;
-      p.image(prerender.gradientGraphic, -p.width * (scaleHRate1 - 1) - 100 / 2, 0, scaleHRate1 * p.width + 100, p.height)
+      p.image(prerender.gradientGraphic, -p.width * (scaleHRate1 - 1) - 10 / 2, -200, scaleHRate1 * p.width + 10, p.height * 1.3)
       p.blendMode(p.DODGE);
       p.image(prerender.gradientGraphic, 0, 0, p.width, p.height)
       p.blendMode(p.MULTIPLY);

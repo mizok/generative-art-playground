@@ -42,22 +42,33 @@ function initMenuScroll() {
 function initMenuLink() {
   const ele = document.querySelectorAll('.menu#menu .menu__link');
   const content = document.querySelector('iframe#playground-content');
+  const loading = document.querySelector('#loading');
   const toggler = document.querySelector('.playground__toggler#playground-toggler');
   const pl = document.querySelector('.playground#playground');
   ele.forEach((el) => {
     el.addEventListener('click', () => {
       toggler.classList.remove('is-active');
       pl.classList.remove('playground--active');
+      loading.classList.add('playground__loading--active')
       const route = el.getAttribute('data-route');
       content.setAttribute('src', 'examples/' + route + '.html');
     })
   })
 }
 
+function initIframeOnLoad() {
+  const content = document.querySelector('iframe#playground-content');
+  const loading = document.querySelector('#loading');
+  content.addEventListener('load', () => {
+    loading.classList.remove('playground__loading--active');
+  }, true)
+}
+
 function main() {
   initToggler();
   initMenuLink();
   initMenuScroll();
+  initIframeOnLoad();
 }
 
 window.onload = main;
