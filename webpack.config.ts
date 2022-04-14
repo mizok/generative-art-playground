@@ -26,7 +26,6 @@ const getEntriesByParsingTemplateNames = (templatesFolderName, atRoot = true) =>
     let entryPath = resolve(__dirname, `src/ts/${entryDependency}.ts`);
     // entry stylesheet
     let entryStyleSheetPath = resolve(__dirname, `./src/scss/${entryDependency}.scss`);
-    console.log(entryPath, entryStyleSheetPath)
     entryPath = fs.existsSync(entryPath) ? entryPath : undefined;
     entryStyleSheetPath = fs.existsSync(entryStyleSheetPath) ? entryStyleSheetPath : undefined;
 
@@ -36,7 +35,6 @@ const getEntriesByParsingTemplateNames = (templatesFolderName, atRoot = true) =>
     });
 
   })
-  console.log(entryObj);
   return entryObj;
 }
 
