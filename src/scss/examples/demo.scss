@@ -22,6 +22,9 @@
 }
 
 .title {
+  animation: fadeIn 1s forwards;
+  animation-delay: 1s;
+
   &--main {
     font-size: 50px;
     font-weight: 700;
