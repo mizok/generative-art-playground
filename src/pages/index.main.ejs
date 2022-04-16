@@ -6,11 +6,26 @@
 <body>
   <div class="playground" id="playground">
     <div class="playground__inner">
-      <div class="playground__sidebar">
-        <h1 class="playground__title">
+      <div class="playground__sidebar sidebar">
+        <h1 class="sidebar__title">
           GENERATIVE ART PLAYGROUND
         </h1>
-        <%- include('../template/menu.ejs') %>
+        <div class="sidebar__menu">
+          <%- include('../template/menu.ejs') %>
+        </div>
+        <div class="sidebar__footer">
+          <div class="author">
+            <div class="author__name">Mizok.H</div>
+            <div class="author__links">
+              <a href="#" class="author__link">
+                <img src="~@img/github.svg" alt="">
+              </a>
+              <a href="#" class="author__link">
+                <img src="~@img/twitter.svg" alt="">
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="playground__body">
         <button class="playground__toggler hamburger hamburger--collapse" id="playground-toggler" type="button">
