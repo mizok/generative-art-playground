@@ -7,7 +7,7 @@ const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plug
 import * as webpack from 'webpack';
 import 'webpack-dev-server'; // dont remove this import, it's for webpack-dev-server type
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-const NO_COMPRESS = false;
+const COMPRESS = true;
 
 const getEntriesByParsingTemplateNames = (templatesFolderName, atRoot = true) => {
   const folderPath = resolve(__dirname, `./src/${templatesFolderName}`);
@@ -65,7 +65,7 @@ const getTemaplteInstancesByParsingTemplateNames = (templatesFolderName, atRoot 
       filename: `${atRoot ? '' : templatesFolderName + '/'}${outputFileName}.html`,
       template: isEjs ? ejsFilePath : ejsFilePath.replace(ejsRegex, `$1.html`),
       favicon: 'src/assets/images/logo.svg',
-      minify: NO_COMPRESS ? false : {
+      minify: COMPRESS ? {
         collapseWhitespace: true,
         keepClosingSlash: true,
         removeComments: true,
@@ -73,7 +73,7 @@ const getTemaplteInstancesByParsingTemplateNames = (templatesFolderName, atRoot 
         removeScriptTypeAttributes: true,
         removeStyleLinkTypeAttributes: true,
         useShortDoctype: true
-      }
+      } : false
     })
   }).filter(function (x: HtmlWebpackPlugin | undefined) {
     return x !== undefined;
@@ -128,7 +128,7 @@ const config = (env: any, argv: any): webpack.Configuration => {
             {
               loader: 'html-loader',
               options: {
-                minimize: !NO_COMPRESS
+                minimize: COMPRESS
               }
             }
           ],
@@ -139,7 +139,7 @@ const config = (env: any, argv: any): webpack.Configuration => {
             {
               loader: 'html-loader',
               options: {
-                minimize: !NO_COMPRESS
+                minimize: COMPRESS
               }
             },
             {
@@ -181,10 +181,10 @@ const config = (env: any, argv: any): webpack.Configuration => {
               }
             },
             (() => {
-              return NO_COMPRESS ? {
+              return COMPRESS ? 'sass-loader' : {
                 loader: 'sass-loader',
                 options: { sourceMap: true, sassOptions: { minimize: false, outputStyle: 'expanded' } }
-              } : 'sass-loader'
+              }
             })()
 
           ]
@@ -192,6 +192,9 @@ const config = (env: any, argv: any): webpack.Configuration => {
         {
           test: /\.(woff(2)?|eot|ttf|otf|svg)$/,
           type: 'asset/inline',
+          generator: {
+            filename: 'assets/fonts/[name][ext]'
+          }
         }
 
       ]
@@ -203,7 +206,7 @@ const config = (env: any, argv: any): webpack.Configuration => {
       }
     },
     optimization: {
-      minimize: !NO_COMPRESS,
+      minimize: COMPRESS,
       minimizer: [new TerserPlugin({
         terserOptions: {
           format: {
@@ -221,8 +224,11 @@ const config = (env: any, argv: any): webpack.Configuration => {
       maxAssetSize: 512000
     },
     plugins: [
+      new webpack.DefinePlugin({
+        'PROCESS.MODE': JSON.stringify(argv.mode)
+      }),
       (() => {
-        return NO_COMPRESS ? undefined : new OptimizeCssAssetsWebpackPlugin()
+        return COMPRESS ? new OptimizeCssAssetsWebpackPlugin() : undefined
       })(),
       new MiniCssExtractPlugin({
         filename: 'css/[name].css'
