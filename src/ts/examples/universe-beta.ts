@@ -189,7 +189,7 @@ function main() {
       p.blendMode(p.DIFFERENCE);
       const scaleHRate1 = 1.65;
       const scaleHRate2 = 1.3;
-      p.image(prerender.gradientGraphic, -p.width * (scaleHRate1 - 1) - 10 / 2, -200, scaleHRate1 * p.width + 10, p.height * 1.3)
+      p.image(prerender.gradientGraphic, -p.width * (scaleHRate1 - 1) - 10 / 2, -200, scaleHRate1 * p.width + 10, p.height + 200)
       p.blendMode(p.DODGE);
       p.image(prerender.gradientGraphic, 0, 0, p.width, p.height)
       p.blendMode(p.MULTIPLY);

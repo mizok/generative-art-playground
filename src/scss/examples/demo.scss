@@ -29,11 +29,19 @@
   &--main {
     font-size: 50px;
     font-weight: 700;
+
+    @include rwd($screen-bs-large) {
+      font-size: 40px;
+    }
   }
 
   &--sub {
     font-size: 50px;
     font-weight: 300;
+
+    @include rwd($screen-bs-large) {
+      font-size: 40px;
+    }
   }
 }
 
