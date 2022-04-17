@@ -85,7 +85,6 @@ function hashHandler() {
 function initHashMechanic() {
   hashHandler();
   window.addEventListener('hashchange', () => {
-    console.log(window.location.hash);
     hashHandler();
   })
 }
