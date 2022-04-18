@@ -23,11 +23,14 @@ const getEntriesByParsingTemplateNames = (templatesFolderName, atRoot = true) =>
 
     const entryDependency = atRoot ? entryName : `${templatesFolderName}/${entryName}`
 
-    let entryPath = resolve(__dirname, `src/ts/${entryDependency}.ts`);
+    let entryPath1 = resolve(__dirname, `src/ts/${entryDependency}.ts`);
+    let entryPath2 = resolve(__dirname, `src/ts/${entryDependency}/main.ts`);
     // entry stylesheet
-    let entryStyleSheetPath = resolve(__dirname, `./src/scss/${entryDependency}.scss`);
-    entryPath = fs.existsSync(entryPath) ? entryPath : undefined;
-    entryStyleSheetPath = fs.existsSync(entryStyleSheetPath) ? entryStyleSheetPath : undefined;
+    let entryStyleSheetPath1 = resolve(__dirname, `./src/scss/${entryDependency}.scss`);
+    let entryStyleSheetPath2 = resolve(__dirname, `./src/scss/${entryDependency}/main.scss`);
+
+    const entryPath = fs.existsSync(entryPath1) ? entryPath1 : fs.existsSync(entryPath2)? entryPath2:undefined;
+    const entryStyleSheetPath = fs.existsSync(entryStyleSheetPath1) ? entryStyleSheetPath1 : fs.existsSync(entryStyleSheetPath2)? entryStyleSheetPath2: undefined;
 
     // import es6-promise and scss util automatically
     entryObj[entryName] = ['es6-promise/auto', entryPath, './src/scss/reset.scss', entryStyleSheetPath].filter(function (x: string | undefined) {
@@ -134,6 +137,15 @@ const config = (env: any, argv: any): webpack.Configuration => {
           ],
         },
         {
+          test: /\.(glsl|vert|frag)$/,
+          loader: 'shader-loader',
+          options: {
+            glsl: {
+              chunkPath: resolve("/glsl/chunks")
+            }
+          }
+        },
+        {
           test: /\.ejs$/,
           use: [
             {
@@ -200,6 +212,7 @@ const config = (env: any, argv: any): webpack.Configuration => {
       ]
     },
     resolve: {
+      extensions:['.ts','.tsx','.js','.jsx','json'],
       alias: {
         '@img': resolve(__dirname, './src/assets/images/'),
         '@font': resolve(__dirname, './src/assets/fonts/')
