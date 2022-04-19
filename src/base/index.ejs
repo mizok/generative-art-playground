@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<%- include('../template/head.ejs',{title:'GENERATIVE ART PLAYGROUND'})%>
+<%- include('./template/head.ejs',{title:'GENERATIVE ART PLAYGROUND'})%>
 
 <body>
   <div class="playground" id="playground">
@@ -12,7 +12,7 @@
           GENERATIVE ART PLAYGROUND
         </h1>
         <div class="sidebar__menu">
-          <%- include('../template/menu.ejs') %>
+          <%- include('./template/menu.ejs') %>
         </div>
         <div class="sidebar__footer">
           <div class="author">
@@ -35,7 +35,7 @@
           </span>
         </button>
         <div class="playground__loading" id="loading">
-          <%- include('../template/loading-icon.ejs') %>
+          <%- include('./template/loading-icon.ejs') %>
         </div>
         <iframe src="examples/demo.html" frameborder="0" class="playground__content" id="playground-content"></iframe>
       </div>

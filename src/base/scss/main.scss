@@ -9,7 +9,7 @@ $hamburger-hover-opacity : 0.7;
 $hamburger-active-layer-color : gray;
 
 @import '~hamburgers/_sass/hamburgers/hamburgers.scss';
-@import 'util/main';
+@import '@util/style/main';
 
 
 .playground {

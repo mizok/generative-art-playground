@@ -4,69 +4,87 @@ const CopyPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require("terser-webpack-plugin");
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin');
+import chalk from 'chalk';
 import * as webpack from 'webpack';
 import 'webpack-dev-server'; // dont remove this import, it's for webpack-dev-server type
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 const COMPRESS = true;
+const warn = chalk.bgYellow.black; 
 
-const getEntriesByParsingTemplateNames = (templatesFolderName, atRoot = true) => {
-  const folderPath = resolve(__dirname, `./src/${templatesFolderName}`);
-  const entryObj: webpack.EntryObject = {};
-  const templateRegx = /(.*)(\.)(ejs|html)/g;
-  fs.readdirSync(folderPath).forEach((o: string) => {
-    if (!o.match(templateRegx)) return;
-    let entryName: string = o.replace(templateRegx, `$1`);
-    const entryRegex = /(.*)(\.)(.*)/g;
-    if (entryName.match(entryRegex)) {
-      entryName = entryName.replace(entryRegex, `$3`);
-    }
-
-    const entryDependency = atRoot ? entryName : `${templatesFolderName}/${entryName}`
-
-    let entryPath1 = resolve(__dirname, `src/ts/${entryDependency}.ts`);
-    let entryPath2 = resolve(__dirname, `src/ts/${entryDependency}/main.ts`);
-    // entry stylesheet
-    let entryStyleSheetPath1 = resolve(__dirname, `./src/scss/${entryDependency}.scss`);
-    let entryStyleSheetPath2 = resolve(__dirname, `./src/scss/${entryDependency}/main.scss`);
-
-    const entryPath = fs.existsSync(entryPath1) ? entryPath1 : fs.existsSync(entryPath2)? entryPath2:undefined;
-    const entryStyleSheetPath = fs.existsSync(entryStyleSheetPath1) ? entryStyleSheetPath1 : fs.existsSync(entryStyleSheetPath2)? entryStyleSheetPath2: undefined;
-
+const getBaseEntry = ()=>{
+  const baseFolder = `./src/base`;
+  const entryObj: webpack.EntryObject = {
     // import es6-promise and scss util automatically
-    entryObj[entryName] = ['es6-promise/auto', entryPath, './src/scss/reset.scss', entryStyleSheetPath].filter(function (x: string | undefined) {
+    base: ['es6-promise/auto', `${baseFolder}/ts/index.ts`, './src/util/style/reset.scss', `${baseFolder}/scss/main.scss`].filter(function (x: string | undefined) {
       return x !== undefined;
-    });
-
-  })
+    })
+  };
   return entryObj;
 }
 
-const getTemaplteInstancesByParsingTemplateNames = (templatesFolderName, atRoot = true) => {
-  const forderPath = resolve(__dirname, `./src/${templatesFolderName}`);
-  return fs.readdirSync(forderPath).map((fullFileName: string) => {
-    const templateRegx = /(.*)(\.)(ejs|html)/g;
-    const ejsRegex = /(.*)(\.ejs)/g;
-    const entryRegex = /(.*)(\.)(.*)(\.)(ejs|html)/g;
-    if (!fullFileName.match(templateRegx)) return;
-    const isEjs = fullFileName.match(ejsRegex);
-    let outputFileName = fullFileName.replace(templateRegx, `$1`);
-    let entryName = outputFileName;
-    if (fullFileName.match(entryRegex)) {
-      outputFileName = fullFileName.replace(entryRegex, `$1`);
-      entryName = fullFileName.replace(entryRegex, `$3`);
+const getExampleEntries = ()=>{
+  const folderPath = resolve(__dirname, `./src/examples`);
+  const entryObj: webpack.EntryObject = {};
+  fs.readdirSync(folderPath).forEach((entryName: string) => {
+    if(!fs.lstatSync(`${folderPath}/${entryName}`).isDirectory())return;
+    const scriptEntryPath1 = resolve(__dirname, `${folderPath}/${entryName}/index.ts`);
+    const scriptEntryPath2 = resolve(__dirname, `${folderPath}/${entryName}/ts/index.ts`);
+    const scriptEntry = fs.existsSync(scriptEntryPath1) ? scriptEntryPath1 : fs.existsSync(scriptEntryPath2)? scriptEntryPath2:undefined;
+
+    const styleSheetEntryPath1 = resolve(__dirname, `${folderPath}/${entryName}/main.scss`);
+    const styleSheetEntryPath2 = resolve(__dirname, `${folderPath}/${entryName}/scss/main.scss`);
+    const styleSheetEntryPath = fs.existsSync(styleSheetEntryPath1) ? styleSheetEntryPath1 : fs.existsSync(styleSheetEntryPath2)? styleSheetEntryPath2: undefined;
+
+    entryObj[entryName] = ['es6-promise/auto', scriptEntry, './src/util/style/reset.scss', styleSheetEntryPath].filter(function (x: string | undefined) {
+      return x !== undefined;
+    });
+  })
+
+  return entryObj;
+}
+
+const getBaseTemplateInstances = ()=>{
+  const baseTemplatePath = resolve(__dirname, `./src/base/index.ejs`);
+  return new HtmlWebpackPlugin({
+    cache: false,
+    chunks: ['base'],
+    filename: `index.html`,
+    template: baseTemplatePath,
+    favicon: 'src/assets/images/logo.svg',
+    minify: COMPRESS ? {
+      collapseWhitespace: true,
+      keepClosingSlash: true,
+      removeComments: true,
+      removeRedundantAttributes: false,
+      removeScriptTypeAttributes: true,
+      removeStyleLinkTypeAttributes: true,
+      useShortDoctype: true
+    } : false
+  })
+}
+
+const getExampleEntryTemplateInstances = () => {
+  const folderPath = resolve(__dirname, `./src/examples`);
+  return fs.readdirSync(folderPath).map((entryName: string) => {
+    if(!fs.lstatSync(`${folderPath}/${entryName}`).isDirectory())return;
+    const ejsFilePath = resolve(folderPath, `${entryName}/index.ejs`);
+    if(!fs.existsSync(ejsFilePath)){
+      const msg = warn(`WARNING: "./src/examples/${entryName}/" is an empty folder, no template files detected inside`);
+      console.log(msg)
+      return;
     }
-    const ejsFilePath = resolve(forderPath, `${fullFileName}`);
-    const data = fs.readFileSync(ejsFilePath, 'utf8')
-    if (!data) {
+    const content = fs.readFileSync(ejsFilePath, 'utf8')
+    if (!content) {
       fs.writeFile(ejsFilePath, ' ', () => { });
-      console.warn(`WARNING : ${fullFileName} is an empty file`);
+      const msg = warn(`WARNING : ${entryName} is an empty file, no inner content detected, since this boilerplate don't allow using empty template files, a blank space has been added to this file automatically`);
+      console.log(msg);
     }
 
     return new HtmlWebpackPlugin({
       cache: false,
       chunks: [entryName],
-      filename: `${atRoot ? '' : templatesFolderName + '/'}${outputFileName}.html`,
-      template: isEjs ? ejsFilePath : ejsFilePath.replace(ejsRegex, `$1.html`),
+      filename: `examples/${entryName}.html`,
+      template: ejsFilePath,
       favicon: 'src/assets/images/logo.svg',
       minify: COMPRESS ? {
         collapseWhitespace: true,
@@ -83,19 +101,19 @@ const getTemaplteInstancesByParsingTemplateNames = (templatesFolderName, atRoot 
   });
 }
 
-
-//generate pageEntry object
-const pageEntries: webpack.EntryObject = getEntriesByParsingTemplateNames('pages');
+//generate base entry object
+const baseEntry = getBaseEntry();
 //generate exampleEntry object
-const exampleEntries: webpack.EntryObject = getEntriesByParsingTemplateNames('examples', false);
+const exampleEntries: webpack.EntryObject = getExampleEntries();
 //generate htmlWebpackPlugin instances
-const pageEntryTemplates: HtmlWebpackPlugin[] = getTemaplteInstancesByParsingTemplateNames('pages');
-const exampleEntryTemplates: HtmlWebpackPlugin[] = getTemaplteInstancesByParsingTemplateNames('examples', false);
+const baseEntryTemplateInstances: HtmlWebpackPlugin = getBaseTemplateInstances();
+
+const exampleEntryTemplateInstances: HtmlWebpackPlugin[] = getExampleEntryTemplateInstances();
 
 
 const config = (env: any, argv: any): webpack.Configuration => {
   const configObj: webpack.Configuration = {
-    entry: { ...pageEntries, ...exampleEntries },
+    entry: { ...baseEntry, ...exampleEntries },
     output: {
       filename: 'js/[name].[chunkhash].js',
       chunkFilename: '[id].[chunkhash].js',
@@ -214,6 +232,7 @@ const config = (env: any, argv: any): webpack.Configuration => {
     resolve: {
       extensions:['.ts','.tsx','.js','.jsx','json'],
       alias: {
+        '@util':resolve(__dirname,'./src/util/'),
         '@img': resolve(__dirname, './src/assets/images/'),
         '@font': resolve(__dirname, './src/assets/fonts/')
       }
@@ -270,8 +289,8 @@ const config = (env: any, argv: any): webpack.Configuration => {
           ],
         }
       ),
-      ...pageEntryTemplates,
-      ...exampleEntryTemplates
+      baseEntryTemplateInstances,
+      ...exampleEntryTemplateInstances
 
     ].filter(function (x) {
       return x !== undefined;
