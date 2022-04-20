@@ -7,55 +7,42 @@
 const fragmentShader = require('./shaders/fragment.frag');
 const vertexShader = require('./shaders/vertex.vert');
 
-import draw from './draw';
 import * as twgl from 'twgl.js';
 
-const init = () => {
-  // Create program
-  let canvas = document.getElementById('canvas');
+const init  = (vShader:string,fShader:string)=>{
+  const canvas = document.getElementById("canvas");
   if (!(canvas instanceof HTMLCanvasElement)) return;
-  const gl = canvas.getContext('webgl');
-  const program = twgl.createProgram(gl, [vertexShader,fragmentShader]);
+  const gl = canvas.getContext("webgl");
+    const programInfo = twgl.createProgramInfo(gl, [vShader, fShader]);
+    const arrays = {
+      position: [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0],
+    };
+    const bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
+    function render(time:number) {
+      twgl.resizeCanvasToDisplaySize(gl.canvas);
+      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+      const uniforms = {
+        u_millis: time,
+        u_resolution: [gl.canvas.width, gl.canvas.height],
+      };
+      const attributes = {
+        a_position:{buffer: bufferInfo.attribs.position.buffer, size: 3},
+      };
 
-  const geometryBuffer = twgl.createBufferFromArray(gl,
-    [-1.0, -1.0,
-    1.0, -1.0,
-   -1.0,  1.0,
-    1.0,  1.0],
-    'buffer'
-  );
+      const attributeSetter = twgl.createAttributeSetters(gl,programInfo.program);
 
-  // Set up attributes and uniforms
-  const attributes = {
-    position: gl.getAttribLocation(program, 'a_position')
-  };
-
-  const uniforms = {
-    resolution: gl.getUniformLocation(program, 'u_resolution'),
-    millis: gl.getUniformLocation(program, 'u_millis')
-  };
-
-  // Set WebGL program here (we have only one)
-  gl.useProgram(program);
-
-
-  // Resize canvas and viewport
-  const resize = () => {
-    twgl.resizeCanvasToDisplaySize(gl.canvas);
-    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-  };
-
-  // Setup canvas
-  window.onresize = resize;
-  resize();
-
-  // Start rendering
-  requestAnimationFrame(now => draw(gl, now, {
-    geometryBuffer,
-    attributes,
-    uniforms,
-  }));
-
+      gl.useProgram(programInfo.program);
+      twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
+      twgl.setUniforms(programInfo, uniforms);
+      twgl.setAttributes(attributeSetter,attributes);
+      twgl.drawBufferInfo(gl, bufferInfo);
+  
+      requestAnimationFrame(render);
+    }
+    requestAnimationFrame(render);
 }
 
-window.onload = init;
+window.onload = ()=>{
+  init(vertexShader,fragmentShader);
+}
+
