@@ -4,27 +4,26 @@
 // This is probably not a good resource to learn
 // from as it has not been well thought out!
 // https://codepen.io/anon/pen/EQLERV
-const fragmentShaderSrc = require('./shaders/fragment.frag');
-const vertexShaderSrc = require('./shaders/vertex.vert');
-import resizeCanvas from './resize-canvas';
-import createProgram from './create-program';
-import createBuffer from './create-buffer';
+const fragmentShader = require('./shaders/fragment.frag');
+const vertexShader = require('./shaders/vertex.vert');
+
 import draw from './draw';
+import * as twgl from 'twgl.js';
+
 const init = () => {
   // Create program
-
   let canvas = document.getElementById('canvas');
   if (!(canvas instanceof HTMLCanvasElement)) return;
   const gl = canvas.getContext('webgl');
+  const program = twgl.createProgram(gl, [vertexShader,fragmentShader]);
 
-  const shaders = [
-    { src: fragmentShaderSrc, type: gl.FRAGMENT_SHADER },
-    { src: vertexShaderSrc, type: gl.VERTEX_SHADER }
-  ];
-
-  const program = createProgram(gl, shaders);
-
-  const geometryBuffer = createBuffer(gl);
+  const geometryBuffer = twgl.createBufferFromArray(gl,
+    [-1.0, -1.0,
+    1.0, -1.0,
+   -1.0,  1.0,
+    1.0,  1.0],
+    'buffer'
+  );
 
   // Set up attributes and uniforms
   const attributes = {
@@ -42,7 +41,7 @@ const init = () => {
 
   // Resize canvas and viewport
   const resize = () => {
-    resizeCanvas(gl.canvas);
+    twgl.resizeCanvasToDisplaySize(gl.canvas);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
   };
 
