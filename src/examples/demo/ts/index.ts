@@ -81,7 +81,6 @@ function main() {
 
 
   };
-
   new p5(sketch, document.body);
 }
 
