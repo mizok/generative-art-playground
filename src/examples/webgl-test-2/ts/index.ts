@@ -113,8 +113,6 @@ const init  = ()=>{
     requestAnimationFrame(loop);
   }
   requestAnimationFrame(loop);
-	
-
 }
 
 window.onload = ()=>{
