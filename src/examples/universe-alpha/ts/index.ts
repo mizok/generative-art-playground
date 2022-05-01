@@ -1,4 +1,4 @@
-import * as p5 from 'p5';
+import  p5 from 'p5';
 
 function setRadialGradient(p: p5 | p5.Graphics, sX: number, sY: number, sR: number, eX: number, eY: number, eR: number, ...colors: { val: number, name: string }[]) {
   const ctx = p.drawingContext as CanvasRenderingContext2D
