@@ -51,15 +51,13 @@ const init = () => {
   const positionAttribLocation = gl.getAttribLocation(program, 'a_position');
   const colorAttribLocation = gl.getAttribLocation(program, 'a_color');
 
+
   gl.clearColor(1, 1, 1, 1);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
   gl.useProgram(program);
 
-  const nodeGroup = [];
-  for (let i = 0; i < 30; i++) {
-    nodeGroup[i] = [Math.random(), Math.random()]
-  }
+
 
   const draw = (bufferArr: number[]) => {
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(bufferArr), gl.STATIC_DRAW);
@@ -140,6 +138,7 @@ const init = () => {
     const coordinates = [];
     const { points, group } = defaultGroup.length > 0 ? genDelaunayPointsData(defaultGroup) : genDelaunayPointsData();
     const triangles = points.triangles;
+    console.log(triangles, group);
     for (let i = 0; i < triangles.length; i += 3) {
       coordinates.push([
         [group[triangles[i]][0], group[triangles[i]][1]],
